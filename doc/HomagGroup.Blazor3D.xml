@@ -1926,6 +1926,16 @@
             <param name="lookAt">New <see cref="T:HomagGroup.Blazor3D.Maths.Vector3"/> camera target point coordinates.</param>
             <returns>Task</returns>
         </member>
+        <member name="M:HomagGroup.Blazor3D.Viewers.Viewer.SetObjectTransform(System.String,HomagGroup.Blazor3D.Maths.Vector3,HomagGroup.Blazor3D.Maths.Euler,HomagGroup.Blazor3D.Maths.Vector3)">
+            <summary>
+            <para>Sets the objects position rotation and scale</para>
+            </summary>
+            <param name="uuid"></param>
+            <param name="position"></param>
+            <param name="rotation"></param>
+            <param name="scale"></param>
+            <returns>Task</returns>
+        </member>
         <member name="M:HomagGroup.Blazor3D.Viewers.Viewer.UpdateCamera(HomagGroup.Blazor3D.Cameras.Camera)">
             <summary>
             Apply updated camera settings to viewer.

@@ -334,6 +334,15 @@ class Viewer3D {
       this.controls.target.set(x, y, z);
     }
   }
+  
+  setObjectTransform(uuid, position, rotation, scale) {
+    let object = this.scene.getObjectByProperty("uuid", uuid);
+    if (object) {
+      Transforms.setPosition(object, position);
+      Transforms.setRotation(object, rotation);
+      Transforms.setScale(object, scale);
+    }
+  }
 
   getFirstNonHelper(intersects) {
     for (let i = 0; i < intersects.length; i++) {

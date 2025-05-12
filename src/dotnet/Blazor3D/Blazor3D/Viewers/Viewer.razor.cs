@@ -24,14 +24,16 @@ namespace HomagGroup.Blazor3D.Viewers
         private IJSObjectReference bundleModule = null!;
 
         private delegate void SelectedObjectStaticEventHandler(Object3DStaticArgs e);
+
         private static event SelectedObjectStaticEventHandler ObjectSelectedStatic = null!;
 
         private delegate void LoadedObjectStaticEventHandler(Object3DStaticArgs e);
+
         private static event LoadedObjectStaticEventHandler ObjectLoadedStatic = null!;
 
         private event LoadedObjectEventHandler ObjectLoadedPrivate = null!;
 
-        
+
         /// <summary>
         /// Raises when user selects object by mouse clicking inside viewer area.
         /// </summary>
@@ -42,12 +44,12 @@ namespace HomagGroup.Blazor3D.Viewers
         /// </summary>
         public event LoadedObjectEventHandler ObjectLoaded = null!;
 
-        
+
         /// <summary>
         /// Raises after JavaScript module is completely loaded.
         /// </summary>
         public event LoadedModuleEventHandler JsModuleLoaded = null!;
-       
+
 
         /// <summary>
         /// <para><see cref="Settings.ViewerSettings"/> parameter of the component.</para>
@@ -88,9 +90,9 @@ namespace HomagGroup.Blazor3D.Viewers
                 ObjectLoadedPrivate += OnObjectLoadedPrivate;
 
                 bundleModule = await JSRuntime.InvokeAsync<IJSObjectReference>(
-                    "import",
-                    "./_content/Blazor3D/js/bundle.js")
-                .AsTask();
+                        "import",
+                        "./_content/Blazor3D/js/bundle.js")
+                    .AsTask();
 
                 if (UseDefaultScene && !Scene.Children.Any())
                 {
@@ -98,13 +100,13 @@ namespace HomagGroup.Blazor3D.Viewers
                 }
 
                 var json = JsonConvert.SerializeObject(new
-                {
-                    Scene = Scene,
-                    ViewerSettings = ViewerSettings,
-                    Camera = Camera,
-                    OrbitControls = OrbitControls,
-                },
-                SerializationHelper.GetSerializerSettings());
+                    {
+                        Scene = Scene,
+                        ViewerSettings = ViewerSettings,
+                        Camera = Camera,
+                        OrbitControls = OrbitControls,
+                    },
+                    SerializationHelper.GetSerializerSettings());
 
                 await bundleModule.InvokeVoidAsync("loadViewer", json);
                 await OnModuleLoaded();
@@ -132,7 +134,19 @@ namespace HomagGroup.Blazor3D.Viewers
             await bundleModule.InvokeVoidAsync("setCameraPosition", position, lookAt);
         }
 
-        
+        /// <summary>
+        /// <para>Sets the objects position rotation and scale</para>
+        /// </summary>
+        /// <param name="uuid"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="scale"></param>
+        /// <returns>Task</returns>
+        public async Task SetObjectTransform(string uuid, Vector3 position, Euler rotation, Vector3 scale)
+        {
+            await bundleModule.InvokeVoidAsync("setObjectTransform", uuid, position, rotation, scale);
+        }
+
 
         /// <summary>
         /// Apply updated camera settings to viewer.
@@ -358,6 +372,7 @@ namespace HomagGroup.Blazor3D.Viewers
                     group.Children.AddRange(childrenResult);
                 }
             }
+
             return result;
         }
 
@@ -398,7 +413,7 @@ namespace HomagGroup.Blazor3D.Viewers
                 if (sprite != null)
                 {
                     Scene.Children.Add(sprite);
-                    ObjectLoaded?.Invoke(new Object3DArgs() { UUID= e.UUID });
+                    ObjectLoaded?.Invoke(new Object3DArgs() { UUID = e.UUID });
                 }
             }
         }

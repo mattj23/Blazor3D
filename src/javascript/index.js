@@ -48,6 +48,10 @@ export function setCameraPosition(position, lookAt) {
   viewer3d.setCameraPosition(position, lookAt);
 }
 
+export function setObjectTransform(uuid,transform){
+  viewer3d.setObjectTransform(uuid,transform);
+}
+
 export function updateCamera(json) {
   const options = JSON.parse(json);
   viewer3d.updateCamera(options);
