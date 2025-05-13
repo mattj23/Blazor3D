@@ -15,6 +15,23 @@ class GeometryBuilder {
       return geometry;
     }
 
+    if (options.type == "RawBufferGeometry") {
+      const geometry = new THREE.BufferGeometry();
+      const vertices = new Float32Array(options.vertices.flatMap(v => [v.x, v.y, v.z]));
+      geometry.setIndex(options.indices);
+      geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+      if (options.normals) {
+        const normals = new Float32Array(options.normals.flatMap(n => [n.x, n.y, n.z]));
+        geometry.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
+      }
+      if (options.uvs) {
+        const uvs = new Float32Array(options.uvs.flatMap(uv => [uv.x, uv.y]));
+        geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+      }
+      geometry.uuid = options.uuid;
+      return geometry;
+    }
+
     if (options.type == "CapsuleGeometry") {
       const geometry = new THREE.CapsuleGeometry(
         options.radius,

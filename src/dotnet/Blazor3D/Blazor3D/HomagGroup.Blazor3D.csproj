@@ -6,18 +6,22 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <DocumentationFile>..\..\..\..\doc\HomagGroup.Blazor3D.xml</DocumentationFile>
+    <Version>1.2.1</Version>
+    <Copyright>Roman Simuta, SamuelRe</Copyright>
+    <PackageProjectUrl>https://github.com/SamuelReithmeir/Blazor3D</PackageProjectUrl>
   </PropertyGroup>
 
 	<PropertyGroup>
-		<PackageId>Blazor3D</PackageId>
+		<PackageId>SamuelRe.Blazor3D</PackageId>
 		<Authors>HOMAG-Group</Authors>
 		<PackageTags>Blazor3D, three.js, Blazor, Razor, Homag-Group, Homag, HomagGroup</PackageTags>
 		<RepositoryType>git</RepositoryType>
-		<RepositoryUrl>https://github.com/HomagGroup/HomagGroup.Blazor3D-Core</RepositoryUrl>
-		<Description>This Razor class library (RCL) contains the Blazor component which allows you create 3D scenes inside your Blazor application.
-This Blazor3D component uses three.js library to display 3D scenes on html canvas.
-See examples of using here https://github.com/HomagGroup/HomagGroup.Blazor3D
-		</Description>
+		<RepositoryUrl>https://github.com/SamuelReithmeir/Blazor3D</RepositoryUrl>
+        <Description>
+            Blazor3D is a Razor class library that allows developers to render interactive 3D scenes using three.js in Blazor applications.
+            
+            This is a fork of the original Blazor3D with added features and bug fixes.
+        </Description>
 		<AssemblyName>Blazor3D</AssemblyName>
 	</PropertyGroup>
 	

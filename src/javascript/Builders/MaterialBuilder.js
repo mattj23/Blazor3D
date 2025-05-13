@@ -54,6 +54,25 @@ class MaterialBuilder {
       material.uuid = options.uuid;
       return material;
     }
+
+    if (options.type == "ShaderMaterial") {
+      const material = new THREE.ShaderMaterial({
+        fragmentShader: options.fragmentShader,
+        vertexShader: options.vertexShader || `
+          void main() {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        uniforms: Object.fromEntries(Object.entries(options.uniforms || {}).map(([k, v]) => [k, {value: v}])),
+        transparent: options.transparent,
+        opacity: options.opacity,
+        depthTest: options.depthTest,
+        depthWrite: options.depthWrite
+      });
+      material.uuid = options.uuid;
+      return material;
+    }
+
   }
 }
 

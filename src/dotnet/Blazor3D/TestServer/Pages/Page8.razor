@@ -1,0 +1,210 @@
+﻿@page "/page8"
+@implements IDisposable
+@using HomagGroup.Blazor3D.Core
+@using HomagGroup.Blazor3D.Enums
+@using HomagGroup.Blazor3D.Events
+@using HomagGroup.Blazor3D.Extras.Core;
+@using HomagGroup.Blazor3D.Geometires
+@using HomagGroup.Blazor3D.Geometires.Lines;
+@using HomagGroup.Blazor3D.Geometires.Text;
+@using HomagGroup.Blazor3D.Helpers
+@using HomagGroup.Blazor3D.Lights
+@using HomagGroup.Blazor3D.Materials
+@using HomagGroup.Blazor3D.Maths
+@using HomagGroup.Blazor3D.Objects
+@using HomagGroup.Blazor3D.Scenes
+@using HomagGroup.Blazor3D.Viewers
+@using HomagGroup.Blazor3D.Cameras
+
+<div class="row justify-content-center">
+    <div class="col-9 v3d">
+        <Viewer @ref="View3D1" ViewerSettings=@settings Scene=scene Camera=camera />
+    </div>
+    <div>@selectionMsg</div>
+</div>
+
+@code {
+    private Viewer View3D1 = null!;
+    private Guid objGuid;
+    private ViewerSettings settings = new()
+        {
+            ContainerId = "rsid",
+            CanSelect = true,
+            CanSelectHelpers = false,
+        };
+
+    private Scene scene = new();
+    private Camera camera = new PerspectiveCamera
+        {
+            Position = new Vector3(3, 3, 3),
+            LookAt = new Vector3(0, 0.5f, 0)
+        };
+
+    private string selectionMsg = string.Empty;
+
+    protected override Task OnInitializedAsync()
+    {
+        AddLights();
+        FillScene();
+        return base.OnInitializedAsync();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            View3D1.ObjectSelected += OnObjectSelected;
+            View3D1.JsModuleLoaded += OnModuleLoaded;
+        }
+
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task OnModuleLoaded()
+    {
+        //await View3D1.Import3DModelAsync(
+        //   Import3DFormats.Fbx,
+        //   "https://threejs.org/examples/models/fbx/Samba%20Dancing.fbx",
+        //   null,
+        //   loadedObjectGuid);
+        // await View3D1.SetCameraPositionAsync(new Vector3(0, 100, 250), new Vector3(0, 50, 0));
+    }
+
+    private void AddLights()
+    {
+        scene.Add(new AmbientLight());
+        var plight = new PointLight()
+            {
+                //Color = "red",
+                Decay = 2,
+                Position = new Vector3(1, 5, 0)
+            };
+        scene.Add(plight);
+        scene.Add(new PointLightHelper(plight, 0.5));
+    }
+    private void FillScene()
+    {
+        var text = new Text
+            {
+                Material = new MeshStandardMaterial
+                {
+                    Color = "red",
+                },
+                Geometry = new TextExtrudeGeometry
+                {
+                    FontURL = "fonts/helvetiker_regular.typeface.json",
+                    Size = 1,
+                    Height = 0.1,
+                }
+            };
+
+        var customMeshCube = new Mesh
+        {
+            Geometry = new RawBufferGeometry
+            {
+                Vertices = [
+                    // Front face (+Z)
+                    new Vector3(-0.5f, -0.5f,  0.5f),
+                    new Vector3( 0.5f, -0.5f,  0.5f),
+                    new Vector3( 0.5f,  0.5f,  0.5f),
+                    new Vector3(-0.5f,  0.5f,  0.5f),
+
+                    // Back face (-Z)
+                    new Vector3( 0.5f, -0.5f, -0.5f),
+                    new Vector3(-0.5f, -0.5f, -0.5f),
+                    new Vector3(-0.5f,  0.5f, -0.5f),
+                    new Vector3( 0.5f,  0.5f, -0.5f),
+
+                    // Left face (-X)
+                    new Vector3(-0.5f, -0.5f, -0.5f),
+                    new Vector3(-0.5f, -0.5f,  0.5f),
+                    new Vector3(-0.5f,  0.5f,  0.5f),
+                    new Vector3(-0.5f,  0.5f, -0.5f),
+
+                    // Right face (+X)
+                    new Vector3( 0.5f, -0.5f,  0.5f),
+                    new Vector3( 0.5f, -0.5f, -0.5f),
+                    new Vector3( 0.5f,  0.5f, -0.5f),
+                    new Vector3( 0.5f,  0.5f,  0.5f),
+
+                    // Top face (+Y)
+                    new Vector3(-0.5f,  0.5f,  0.5f),
+                    new Vector3( 0.5f,  0.5f,  0.5f),
+                    new Vector3( 0.5f,  0.5f, -0.5f),
+                    new Vector3(-0.5f,  0.5f, -0.5f),
+
+                    // Bottom face (-Y)
+                    new Vector3(-0.5f, -0.5f, -0.5f),
+                    new Vector3( 0.5f, -0.5f, -0.5f),
+                    new Vector3( 0.5f, -0.5f,  0.5f),
+                    new Vector3(-0.5f, -0.5f,  0.5f),
+                ],
+                Indices = [
+                    // Front face
+                    0, 1, 2,  2, 3, 0,
+
+                    // Back face
+                    4, 5, 6,  6, 7, 4,
+
+                    // Left face
+                    8, 9, 10, 10,11, 8,
+
+                    // Right face
+                    12,13,14, 14,15,12,
+
+                    // Top face
+                    16,17,18, 18,19,16,
+
+                    // Bottom face
+                    20,21,22, 22,23,20
+                ],
+                Uvs = Enumerable.Repeat(new List<Vector2>
+                {
+                    new(0.0f, 0.0f),
+                    new(1.0f, 0.0f),
+                    new(1.0f, 1.0f),
+                    new(0.0f, 1.0f),
+                }, 6).SelectMany(uvs => uvs).ToList()
+            },
+            Material = new ShaderMaterial
+            {
+                FragmentShader = @"
+                    uniform vec3 color;
+                    varying vec2 vUv;
+                    void main() {
+                        gl_FragColor = vec4(color.r/255.0 * vUv.x, color.g/255.0 * vUv.y, color.b/255.0 * (vUv.x + vUv.y), 1);
+                    }
+                ",
+                VertexShader = @"varying vec2 vUv;
+                    void main() {
+                      vUv = uv;
+                      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }",
+                Uniforms = new Dictionary<string, object>()
+                {
+                    {"color",new Vector3(Random.Shared.Next(255),Random.Shared.Next(255),Random.Shared.Next(255))}
+                }
+            }
+        };
+
+        scene.Add(customMeshCube);
+
+    }
+
+    private void OnObjectSelected(Object3DArgs e)
+    {
+        var result = Viewer.GetObjectByUuid(e.UUID, scene.Children);
+        if (result != null)
+        {
+            this.selectionMsg = $"selected object with id = {result.Uuid}, type = {result.Type} and name = {result.Name}.";
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        View3D1.ObjectSelected -= OnObjectSelected;
+        View3D1.JsModuleLoaded -= OnModuleLoaded;
+    }
+}
+

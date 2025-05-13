@@ -88,6 +88,23 @@ class GeometryBuilder {
       return geometry;
     }
 
+    if (options.type == "RawBufferGeometry") {
+      const geometry = new three__WEBPACK_IMPORTED_MODULE_0__.BufferGeometry();
+      const vertices = new Float32Array(options.vertices.flatMap(v => [v.x, v.y, v.z]));
+      geometry.setIndex(options.indices);
+      geometry.setAttribute('position', new three__WEBPACK_IMPORTED_MODULE_0__.BufferAttribute(vertices, 3));
+      if (options.normals) {
+        const normals = new Float32Array(options.normals.flatMap(n => [n.x, n.y, n.z]));
+        geometry.setAttribute('normal', new three__WEBPACK_IMPORTED_MODULE_0__.BufferAttribute(normals, 3));
+      }
+      if (options.uvs) {
+        const uvs = new Float32Array(options.uvs.flatMap(uv => [uv.x, uv.y]));
+        geometry.setAttribute('uv', new three__WEBPACK_IMPORTED_MODULE_0__.BufferAttribute(uvs, 2));
+      }
+      geometry.uuid = options.uuid;
+      return geometry;
+    }
+
     if (options.type == "CapsuleGeometry") {
       const geometry = new three__WEBPACK_IMPORTED_MODULE_0__.CapsuleGeometry(
         options.radius,
@@ -595,6 +612,25 @@ class MaterialBuilder {
       material.uuid = options.uuid;
       return material;
     }
+
+    if (options.type == "ShaderMaterial") {
+      const material = new three__WEBPACK_IMPORTED_MODULE_1__.ShaderMaterial({
+        fragmentShader: options.fragmentShader,
+        vertexShader: options.vertexShader || `
+          void main() {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        uniforms: Object.fromEntries(Object.entries(options.uniforms || {}).map(([k, v]) => [k, {value: v}])),
+        transparent: options.transparent,
+        opacity: options.opacity,
+        depthTest: options.depthTest,
+        depthWrite: options.depthWrite
+      });
+      material.uuid = options.uuid;
+      return material;
+    }
+
   }
 }
 
