@@ -37,5 +37,10 @@ namespace HomagGroup.Blazor3D.Objects
         /// Material <see cref="LineBasicMaterial"/> to draw edges with EdgesGeometry. If not specified, no edges will be drawn.
         /// </summary>
         public LineBasicMaterial EdgesMaterial { get; set; } = null!;
+
+        /// <summary>
+        /// Angle in degrees at which edges are considered visible. Default is 1.
+        /// </summary>
+        public int EdgesThresholdAngle { get; set; } = 1;
     }
 }

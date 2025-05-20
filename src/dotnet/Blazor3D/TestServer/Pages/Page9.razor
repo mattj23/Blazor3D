@@ -1,4 +1,4 @@
-﻿@page "/page8"
+﻿@page "/page9"
 @implements IDisposable
 @using HomagGroup.Blazor3D.Core
 @using HomagGroup.Blazor3D.Enums
@@ -15,10 +15,12 @@
 @using HomagGroup.Blazor3D.Scenes
 @using HomagGroup.Blazor3D.Viewers
 @using HomagGroup.Blazor3D.Cameras
+@using HomagGroup.Blazor3D.Controls
+@using HomagGroup.Blazor3D.Textures
 
 <div class="row justify-content-center">
     <div class="col-9 v3d">
-        <Viewer @ref="View3D1" ViewerSettings="@settings" Scene="@scene" Camera="@camera"/>
+        <Viewer @ref="View3D1" ViewerSettings="@settings" OrbitControls="@(new OrbitControls(){EnableZoom=false,EnablePan=false,EnableRotate=false})" Scene="@scene" Camera="@camera"/>
     </div>
     <div>@selectionMsg</div>
 </div>
@@ -32,6 +34,7 @@
         ContainerId = "rsid",
         CanSelect = true,
         CanSelectHelpers = false,
+        ShowViewHelper = false
     };
 
     private Scene scene = new();
@@ -56,7 +59,6 @@
         if (firstRender)
         {
             View3D1.ObjectSelected += OnObjectSelected;
-            View3D1.CanvasSizeChanged += OnCanavasSizeChanged;
             View3D1.JsModuleLoaded += OnModuleLoaded;
         }
 
@@ -83,25 +85,11 @@
             Position = new Vector3(1, 5, 0)
         };
         scene.Add(plight);
-        scene.Add(new PointLightHelper(plight, 0.5));
+        //scene.Add(new PointLightHelper(plight, 0.5));
     }
 
     private void FillScene()
     {
-        var text = new Text
-        {
-            Material = new MeshStandardMaterial
-            {
-                Color = "red",
-            },
-            Geometry = new TextExtrudeGeometry
-            {
-                FontURL = "fonts/helvetiker_regular.typeface.json",
-                Size = 1,
-                Height = 0.1,
-            }
-        };
-
         var geometry = new RawBufferGeometry
         {
             Vertices =
@@ -173,30 +161,13 @@
         var customMeshCube = new Mesh
         {
             Geometry = geometry,
-            Material = new ShaderMaterial
+            Material = new TextureMaterial()
             {
-                FragmentShader = @"
-                    uniform vec3 color;
-                    varying vec2 vUv;
-                    void main() {
-                        gl_FragColor = vec4(color.r/255.0 * vUv.x, color.g/255.0 * vUv.y, color.b/255.0 * (vUv.x + vUv.y), 1);
-                    }
-                ",
-                VertexShader = @"varying vec2 vUv;
-                    void main() {
-                      vUv = uv;
-                      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                    }",
-                Uniforms = new Dictionary<string, object>()
+                Map = new Texture()
                 {
-                    { "color", new Vector3(Random.Shared.Next(255), Random.Shared.Next(255), Random.Shared.Next(255)) }
+                    TextureUrl = "uv_grid_opengl.jpg"
                 }
-            },
-            EdgesMaterial = new LineBasicMaterial()
-            {
-                Color = "red",
-                LineWidth = 3
-            },
+            }
         };
 
         scene.Add(customMeshCube);
@@ -207,16 +178,9 @@
         var result = Viewer.GetObjectByUuid(e.UUID, scene.Children);
         if (result != null)
         {
-            selectionMsg = $"selected object with id = {result.Uuid}, type = {result.Type} and name = {result.Name}";
+            this.selectionMsg = $"selected object with id = {result.Uuid}, type = {result.Type} and name = {result.Name}.";
             StateHasChanged();
         }
-    }
-
-
-    private void OnCanavasSizeChanged(Vector2 size)
-    {
-        this.selectionMsg = $"Canvas size changed to {size.X} x {size.Y}";
-        StateHasChanged();
     }
 
     public void Dispose()

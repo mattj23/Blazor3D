@@ -275,6 +275,17 @@
             The texture will repeats to infinity, mirroring on each repeat.
             </summary>
         </member>
+        <member name="T:HomagGroup.Blazor3D.Events.CanvasRectSizedEventHandler">
+            <summary>
+            <para>Delegate that handles client rect changes of canvas of viewer</para>
+            </summary>
+            <param name="e"><see cref="T:HomagGroup.Blazor3D.Maths.Vector2"/>pixelsize of canvas</param>
+        </member>
+        <member name="T:HomagGroup.Blazor3D.Events.CanvasSizeArgs">
+            <summary>
+            <para>Arguments for <see cref="T:HomagGroup.Blazor3D.Viewers.Viewer"/> ObjectSelected and ObjectLoaded event handlers.</para>
+            </summary>
+        </member>
         <member name="T:HomagGroup.Blazor3D.Events.LoadedModuleEventHandler">
             <summary>
             <para>Delegate that handles <see cref="T:HomagGroup.Blazor3D.Viewers.Viewer"/> JsModuleLoaded event.</para>
@@ -1586,6 +1597,11 @@
         <member name="P:HomagGroup.Blazor3D.Objects.Mesh.EdgesMaterial">
             <summary>
             Material <see cref="T:HomagGroup.Blazor3D.Materials.LineBasicMaterial"/> to draw edges with EdgesGeometry. If not specified, no edges will be drawn.
+            </summary>
+        </member>
+        <member name="P:HomagGroup.Blazor3D.Objects.Mesh.EdgesThresholdAngle">
+            <summary>
+            Angle in degrees at which edges are considered visible. Default is 1.
             </summary>
         </member>
         <member name="T:HomagGroup.Blazor3D.Objects.Sprite">

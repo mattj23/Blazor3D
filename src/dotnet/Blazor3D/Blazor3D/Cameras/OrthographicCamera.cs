@@ -67,5 +67,6 @@
         /// Zoom factor of the camera. Default is 1.
         /// </summary>
         public double Zoom { get; set; } = 1;
+        public bool UseJavascriptAspectCalculation { get; set; } = true;
     }
 }

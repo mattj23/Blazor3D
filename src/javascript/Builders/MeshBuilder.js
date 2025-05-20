@@ -11,7 +11,7 @@ class MeshBuilder {
     mesh.uuid = options.uuid;
 
     if (options.edgesMaterial) {
-      const edges = this.BuildEdges(geometry, options.edgesMaterial);
+      const edges = this.BuildEdges(geometry, options.edgesMaterial,options.edgesThresholdAngle);
       mesh.add(edges);
     }
 
@@ -21,8 +21,8 @@ class MeshBuilder {
     return mesh;
   }
 
-  static BuildEdges(geometry, options) {
-    const edges = new THREE.EdgesGeometry(geometry);
+  static BuildEdges(geometry, options,thresholdAngle) {
+    const edges = new THREE.EdgesGeometry(geometry,thresholdAngle);
     const material = MaterialBuilder.buildMaterial(options);
     return new THREE.LineSegments(edges, material);
   }

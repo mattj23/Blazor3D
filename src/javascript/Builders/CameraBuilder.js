@@ -3,7 +3,7 @@ import Transforms from "../Utils/Transforms";
 
 class CameraBuilder {
 
-  static BuildCamera(options, aspect) {
+  static BuildCamera(options,aspect) {
     let camera;
     if ((options.type == "PerspectiveCamera")) {
       camera = new THREE.PerspectiveCamera(
@@ -16,8 +16,8 @@ class CameraBuilder {
 
     if ((options.type == "OrthographicCamera")) {
       camera = new THREE.OrthographicCamera(
-        options.left * aspect,
-        options.right * aspect,
+        options.left * (options.useJavascriptAspectCalculation?aspect:1),
+        options.right * (options.useJavascriptAspectCalculation?aspect:1),
         options.top,
         options.bottom,
         options.near,

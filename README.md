@@ -9,6 +9,7 @@ You can find the documentation and examples of using Blazor3D [here](https://git
 * Added support for ShaderMaterial to allow for custom fragement/vertexShader
 * Added support RawBufferGeometry to allow for setting of vertices/indices directly
 * Added support for changing position/rotation/scale of objects based on uuid without rebuilding scene
+* Added support for TextureMaterial for Meshes
 
 ## Build Instructions
 ### Build the Javascript bundle using webpack

@@ -48,8 +48,8 @@ export function setCameraPosition(position, lookAt) {
   viewer3d.setCameraPosition(position, lookAt);
 }
 
-export function setObjectTransform(uuid,transform){
-  viewer3d.setObjectTransform(uuid,transform);
+export function setObjectTransform(uuid,position, rotation, scale){
+  viewer3d.setObjectTransform(uuid,position, rotation, scale);
 }
 
 export function updateCamera(json) {

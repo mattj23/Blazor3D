@@ -29,6 +29,8 @@ namespace HomagGroup.Blazor3D.Controls
         /// If true, then panning enabled. Otherwise, panning disabled. Default is true
         /// </summary>
         public bool EnablePan { get; set; } = true;
+        public bool EnableZoom { get; set; } = true;
+        public bool EnableRotate { get; set; } = true;
 
         /// <summary>
         /// If true, than damping enabled. Otherwise, damping disabled. Default is true

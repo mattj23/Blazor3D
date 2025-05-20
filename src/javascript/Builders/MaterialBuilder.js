@@ -72,6 +72,19 @@ class MaterialBuilder {
       material.uuid = options.uuid;
       return material;
     }
+    
+    if(options.type == "TextureMaterial") {
+      let map = TextureBuilder.buildTexture(options.map);
+      const material = new THREE.MeshBasicMaterial({
+        map: map,
+        transparent : options.transparent,
+        opacity : options.opacity,
+        depthTest: options.depthTest,
+        depthWrite: options.depthWrite
+      });
+      material.uuid = options.uuid;
+      return material;
+    }
 
   }
 }
