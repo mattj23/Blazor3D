@@ -10,6 +10,7 @@ You can find the documentation and examples of using Blazor3D [here](https://git
 * Added support RawBufferGeometry to allow for setting of vertices/indices directly
 * Added support for changing position/rotation/scale of objects based on uuid without rebuilding scene
 * Added support for TextureMaterial for Meshes
+* Added support for direct mouse events for objects: ObjectClicked,ObjectHovered,ObjectHoverEnd
 
 ## Build Instructions
 ### Build the Javascript bundle using webpack

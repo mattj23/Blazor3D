@@ -17,6 +17,11 @@ namespace HomagGroup.Blazor3D.Settings
         /// If true, user can select objects by mouse. Default is false.
         /// </summary>
         public bool CanSelect { get; set; } = false;
+        
+        /// <summary>
+        /// If true, get mouse click, hover and hover end events. Default is false.
+        /// </summary>
+        public bool MouseEventsEnabled { get; set; }
 
         /// <summary>
         /// If true, the helpers can be selected by mouse. Default is false.

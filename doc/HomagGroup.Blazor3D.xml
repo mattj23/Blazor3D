@@ -1799,6 +1799,11 @@
             If true, user can select objects by mouse. Default is false.
             </summary>
         </member>
+        <member name="P:HomagGroup.Blazor3D.Settings.ViewerSettings.MouseEventsEnabled">
+            <summary>
+            If true, get mouse click, hover and hover end events. Default is false.
+            </summary>
+        </member>
         <member name="P:HomagGroup.Blazor3D.Settings.ViewerSettings.CanSelectHelpers">
             <summary>
             If true, the helpers can be selected by mouse. Default is false.

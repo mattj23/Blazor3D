@@ -24,9 +24,15 @@ namespace HomagGroup.Blazor3D.Viewers
         private IJSObjectReference bundleModule = null!;
 
         private delegate void SelectedObjectStaticEventHandler(Object3DStaticArgs e);
+        private delegate void ObjectHoveredStaticEventHandler(Object3DStaticArgs e);
+        private delegate void ObjectHoverEndStaticEventHandler(Object3DStaticArgs e);
+        private delegate void ObjectClickedStaticEventHandler(Object3DStaticArgs e);
         private delegate void CanvasRectSizedStaticEventHandler(CanvasSizeStaticArgs e);
 
         private static event SelectedObjectStaticEventHandler ObjectSelectedStatic = null!;
+        private static event ObjectHoveredStaticEventHandler ObjectHoveredStatic = null!;
+        private static event ObjectHoverEndStaticEventHandler ObjectHoverEndStatic = null!;
+        private static event ObjectHoverEndStaticEventHandler ObjectClickedStatic = null!;
         private static event CanvasRectSizedStaticEventHandler CanvasSizeChangedStatic = null!;
 
         private delegate void LoadedObjectStaticEventHandler(Object3DStaticArgs e);
@@ -40,6 +46,9 @@ namespace HomagGroup.Blazor3D.Viewers
         /// Raises when user selects object by mouse clicking inside viewer area.
         /// </summary>
         public event SelectedObjectEventHandler ObjectSelected = null!;
+        public event HoveredObjectEventHandler ObjectHovered = null!;
+        public event HoverEndObjectEventHandler ObjectHoverEnd = null!;
+        public event HoverEndObjectEventHandler ObjectClicked = null!;
         public event CanvasRectSizedEventHandler CanvasSizeChanged = null!;
 
         /// <summary>
@@ -89,6 +98,9 @@ namespace HomagGroup.Blazor3D.Viewers
             if (firstRender)
             {
                 ObjectSelectedStatic += OnObjectSelectedStatic;
+                ObjectHoveredStatic += OnObjectHoveredStatic;
+                ObjectHoverEndStatic += OnObjectHoverEndStatic;
+                ObjectClickedStatic += OnObjectClickedStatic;
                 CanvasSizeChangedStatic += OnCanvasRectSizedStatic;
                 ObjectLoadedStatic += OnObjectLoadedStatic;
                 ObjectLoadedPrivate += OnObjectLoadedPrivate;
@@ -196,6 +208,46 @@ namespace HomagGroup.Blazor3D.Viewers
             });
             return Task.FromResult(result);
         }
+        
+        [JSInvokable]
+        public static Task<string> ReceiveClickedObjectUUID(string containerId, string uuid)
+        {
+            var guid = string.IsNullOrWhiteSpace(uuid) ? Guid.Empty : Guid.Parse(uuid);
+            var result = containerId + uuid;
+            ObjectClickedStatic?.Invoke(new Object3DStaticArgs()
+            {
+                ContainerId = containerId,
+                UUID = guid,
+            });
+            return Task.FromResult(result);
+        }
+        
+        [JSInvokable]
+        public static Task<string> ReceiveHoveredObjectUUID(string containerId, string uuid)
+        {
+            var guid = string.IsNullOrWhiteSpace(uuid) ? Guid.Empty : Guid.Parse(uuid);
+            var result = containerId + uuid;
+            ObjectHoveredStatic?.Invoke(new Object3DStaticArgs()
+            {
+                ContainerId = containerId,
+                UUID = guid,
+            });
+            return Task.FromResult(result);
+        }
+        
+        [JSInvokable]
+        public static Task<string> ReceiveHoverEndObjectUUID(string containerId, string uuid)
+        {
+            var guid = string.IsNullOrWhiteSpace(uuid) ? Guid.Empty : Guid.Parse(uuid);
+            var result = containerId + uuid;
+            ObjectHoverEndStatic?.Invoke(new Object3DStaticArgs()
+            {
+                ContainerId = containerId,
+                UUID = guid,
+            });
+            return Task.FromResult(result);
+        }
+        
         [JSInvokable]
         public static Task ReceiveCanvasRectSizeChange(string containerId, Vector2 size)
         {
@@ -335,6 +387,27 @@ namespace HomagGroup.Blazor3D.Viewers
                 ObjectSelected?.Invoke(new Object3DArgs() { UUID = e.UUID });
             }
         }
+        private void OnObjectHoveredStatic(Object3DStaticArgs e)
+        {
+            if (ViewerSettings.ContainerId == e.ContainerId)
+            {
+                ObjectHovered?.Invoke(new Object3DArgs() { UUID = e.UUID });
+            }
+        }
+        private void OnObjectHoverEndStatic(Object3DStaticArgs e)
+        {
+            if (ViewerSettings.ContainerId == e.ContainerId)
+            {
+                ObjectHoverEnd?.Invoke(new Object3DArgs() { UUID = e.UUID });
+            }
+        }
+        private void OnObjectClickedStatic(Object3DStaticArgs e)
+        {
+            if (ViewerSettings.ContainerId == e.ContainerId)
+            {
+                ObjectClicked?.Invoke(new Object3DArgs() { UUID = e.UUID });
+            }
+        }
         private void OnCanvasRectSizedStatic(CanvasSizeStaticArgs e)
         {
             if (ViewerSettings.ContainerId == e.ContainerId)
@@ -442,6 +515,9 @@ namespace HomagGroup.Blazor3D.Viewers
         public void Dispose()
         {
             ObjectSelectedStatic -= OnObjectSelectedStatic;
+            ObjectHoveredStatic -= OnObjectHoveredStatic;
+            ObjectHoverEndStatic -= OnObjectHoverEndStatic;
+            ObjectClickedStatic -= OnObjectHoverEndStatic;
             ObjectLoadedStatic -= OnObjectLoadedStatic;
             ObjectLoadedPrivate -= OnObjectLoadedPrivate;
             CanvasSizeChangedStatic -= OnCanvasRectSizedStatic;

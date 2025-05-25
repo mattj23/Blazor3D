@@ -1327,7 +1327,7 @@ class Viewer3D {
         if (this.options.viewerSettings.showViewHelper) {
             this.renderer.autoClear = false;
         }
-        ;
+        
 
         this.renderer.domElement.style.width = "100%";
         this.renderer.domElement.style.height = "100%";
@@ -1336,6 +1336,9 @@ class Viewer3D {
             if (this.options.viewerSettings.canSelect == true) {
                 this.selectObject(event);
             }
+            if(this.options.viewerSettings.mouseEventsEnabled===true){
+                this.handleMouseClick(event);
+            }
             if (
                 this.options.camera.animateRotationSettings
                     .stopAnimationOnOrbitControlMove == true
@@ -1343,6 +1346,11 @@ class Viewer3D {
                 this.options.camera.animateRotationSettings.animateRotation = false;
             }
         };
+        this.renderer.domElement.onmousemove = (event) => {
+            if(this.options.viewerSettings.mouseEventsEnabled===true){
+                this.handleMouseMove(event);
+            }
+        }
 
         this.container.appendChild(this.renderer.domElement);
 
@@ -1621,6 +1629,72 @@ class Viewer3D {
                 this.options.viewerSettings.containerId,
                 this.INTERSECTED.uuid
             );
+        }
+    }
+    
+    lastHoveredObject = null;
+    handleMouseMove(event){
+        let canvas = this.renderer.domElement;
+
+        this.mouse.x = (event.offsetX / canvas.clientWidth) * 2 - 1;
+        this.mouse.y = -(event.offsetY / canvas.clientHeight) * 2 + 1;
+
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const intersects = this.raycaster.intersectObjects(
+            this.scene.children,
+            true
+        );
+        if (intersects.length === 0) {
+            if (this.lastHoveredObject) {
+                DotNet.invokeMethodAsync(
+                    "Blazor3D",
+                    "ReceiveHoverEndObjectUUID",
+                    this.options.viewerSettings.containerId,
+                    this.lastHoveredObject.uuid
+                );
+            }
+            this.lastHoveredObject = null;
+            return;
+        }
+        else if( this.lastHoveredObject && this.lastHoveredObject.uuid !== intersects[0].object.uuid ){
+            DotNet.invokeMethodAsync(
+                "Blazor3D",
+                "ReceiveHoverEndObjectUUID",
+                this.options.viewerSettings.containerId,
+                this.lastHoveredObject.uuid
+            );
+            this.lastHoveredObject = null;
+        }
+        else if( !this.lastHoveredObject){
+            this.lastHoveredObject = intersects[0].object;
+            DotNet.invokeMethodAsync(
+                "Blazor3D",
+                "ReceiveHoveredObjectUUID",
+                this.options.viewerSettings.containerId,
+                this.lastHoveredObject.uuid
+            );
+        }
+    }
+    handleMouseClick(event){
+        let canvas = this.renderer.domElement;
+
+        this.mouse.x = (event.offsetX / canvas.clientWidth) * 2 - 1;
+        this.mouse.y = -(event.offsetY / canvas.clientHeight) * 2 + 1;
+
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const intersects = this.raycaster.intersectObjects(
+            this.scene.children,
+            true
+        );
+        if (intersects.length !== 0) {
+            if (this.lastHoveredObject) {
+                DotNet.invokeMethodAsync(
+                    "Blazor3D",
+                    "ReceiveClickedObjectUUID",
+                    this.options.viewerSettings.containerId,
+                    intersects[0].object.uuid
+                );
+            };
         }
     }
 

@@ -20,7 +20,9 @@
 
 <div class="row justify-content-center">
     <div class="col-9 v3d">
-        <Viewer @ref="View3D1" ViewerSettings="@settings" OrbitControls="@(new OrbitControls(){EnableZoom=false,EnablePan=false,EnableRotate=false})" Scene="@scene" Camera="@camera"/>
+        <Viewer @ref="View3D1" ViewerSettings="@settings"
+                OrbitControls="@(new OrbitControls() { EnableZoom = false, EnablePan = false, EnableRotate = false })"
+                Scene="@scene" Camera="@camera"/>
     </div>
     <div>@selectionMsg</div>
 </div>
@@ -32,9 +34,10 @@
     private ViewerSettings settings = new()
     {
         ContainerId = "rsid",
-        CanSelect = true,
+        CanSelect = false,
         CanSelectHelpers = false,
-        ShowViewHelper = false
+        ShowViewHelper = false,
+        MouseEventsEnabled = true
     };
 
     private Scene scene = new();
@@ -58,7 +61,9 @@
     {
         if (firstRender)
         {
-            View3D1.ObjectSelected += OnObjectSelected;
+            View3D1.ObjectClicked += OnObjectClicked;
+            View3D1.ObjectHovered += OnObjectHovered;
+            View3D1.ObjectHoverEnd += OnObjectHoverEnd;
             View3D1.JsModuleLoaded += OnModuleLoaded;
         }
 
@@ -173,19 +178,44 @@
         scene.Add(customMeshCube);
     }
 
-    private void OnObjectSelected(Object3DArgs e)
+    private void OnObjectClicked(Object3DArgs e)
     {
         var result = Viewer.GetObjectByUuid(e.UUID, scene.Children);
         if (result != null)
         {
-            this.selectionMsg = $"selected object with id = {result.Uuid}, type = {result.Type} and name = {result.Name}.";
+            Console.WriteLine($"clicked object with id = {result.Uuid}, type = {result.Type} and name = {result.Name}.");
+            selectionMsg = $"clicked object with id = {result.Uuid}, type = {result.Type} and name = {result.Name}.";
+            StateHasChanged();
+        }
+    }
+
+    private void OnObjectHovered(Object3DArgs e)
+    {
+        var result = Viewer.GetObjectByUuid(e.UUID, scene.Children);
+        if (result != null)
+        {
+            Console.WriteLine($"hovered object with id = {result.Uuid}, type = {result.Type} and name = {result.Name}.");
+            this.selectionMsg = $"hovered object with id = {result.Uuid}, type = {result.Type} and name = {result.Name}.";
+            StateHasChanged();
+        }
+    }
+
+    private void OnObjectHoverEnd(Object3DArgs e)
+    {
+        var result = Viewer.GetObjectByUuid(e.UUID, scene.Children);
+        if (result != null)
+        {
+            Console.WriteLine($"stopped hover on object with id = {result.Uuid}, type = {result.Type} and name = {result.Name}.");
+            this.selectionMsg = $"stopped hover on object with id = {result.Uuid}, type = {result.Type} and name = {result.Name}.";
             StateHasChanged();
         }
     }
 
     public void Dispose()
     {
-        View3D1.ObjectSelected -= OnObjectSelected;
+        View3D1.ObjectSelected -= OnObjectClicked;
+        View3D1.ObjectSelected -= OnObjectHovered;
+        View3D1.ObjectSelected -= OnObjectHoverEnd;
         View3D1.JsModuleLoaded -= OnModuleLoaded;
     }
 
