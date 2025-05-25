@@ -9,6 +9,7 @@ class MeshBuilder {
     const material = MaterialBuilder.buildMaterial(options.material);
     const mesh = new THREE.Mesh(geometry, material);
     mesh.uuid = options.uuid;
+    mesh.ignoreMouseEvents = options.ignoreMouseEvents;
 
     if (options.edgesMaterial) {
       const edges = this.BuildEdges(geometry, options.edgesMaterial,options.edgesThresholdAngle);

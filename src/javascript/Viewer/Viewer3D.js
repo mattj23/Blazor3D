@@ -353,7 +353,7 @@ class Viewer3D {
         const intersects = this.raycaster.intersectObjects(
             this.scene.children,
             true
-        );
+        ).filter(x => !x.object.ignoreMouseEvents);
         if (intersects.length === 0) {
             if (this.lastHoveredObject) {
                 DotNet.invokeMethodAsync(
@@ -395,7 +395,7 @@ class Viewer3D {
         const intersects = this.raycaster.intersectObjects(
             this.scene.children,
             true
-        );
+        ).filter(x => !x.object.ignoreMouseEvents);
         if (intersects.length !== 0) {
             if (this.lastHoveredObject) {
                 DotNet.invokeMethodAsync(
