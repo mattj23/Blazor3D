@@ -532,7 +532,7 @@ class LineBuilder {
 
     
     line.uuid = options.uuid;
-    line.ignoreMouseEvents = options.ignoreMouseEvents;
+    line.calculateMouseEvents = options.calculateMouseEvents;
     _Utils_Transforms__WEBPACK_IMPORTED_MODULE_0__["default"].setPosition(line, options.position);
     _Utils_Transforms__WEBPACK_IMPORTED_MODULE_0__["default"].setRotation(line,options.rotation);
     _Utils_Transforms__WEBPACK_IMPORTED_MODULE_0__["default"].setScale(line,options.scale);
@@ -678,7 +678,7 @@ class MeshBuilder {
     const material = _MaterialBuilder__WEBPACK_IMPORTED_MODULE_2__["default"].buildMaterial(options.material);
     const mesh = new three__WEBPACK_IMPORTED_MODULE_3__.Mesh(geometry, material);
     mesh.uuid = options.uuid;
-    mesh.ignoreMouseEvents = options.ignoreMouseEvents;
+    mesh.calculateMouseEvents = options.calculateMouseEvents;
 
     if (options.edgesMaterial) {
       const edges = this.BuildEdges(geometry, options.edgesMaterial,options.edgesThresholdAngle);
@@ -1645,7 +1645,7 @@ class Viewer3D {
         const intersects = this.raycaster.intersectObjects(
             this.scene.children,
             true
-        ).filter(x => !x.object.ignoreMouseEvents);
+        ).filter(x => x.object.calculateMouseEvents);
         if (intersects.length === 0) {
             if (this.lastHoveredObject) {
                 DotNet.invokeMethodAsync(
@@ -1687,7 +1687,7 @@ class Viewer3D {
         const intersects = this.raycaster.intersectObjects(
             this.scene.children,
             true
-        ).filter(x => !x.object.ignoreMouseEvents);
+        ).filter(x => x.object.calculateMouseEvents);
         if (intersects.length !== 0) {
             if (this.lastHoveredObject) {
                 DotNet.invokeMethodAsync(

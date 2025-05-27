@@ -47,7 +47,7 @@ namespace HomagGroup.Blazor3D.Core
         /// </summary>
         public List<Object3D> Children { get; set; } = new List<Object3D>();
         
-        public bool IgnoreMouseEvents { get; set; } = false;
+        public bool CalculateMouseEvents { get; set; }
 
         /// <summary>
         /// Settings to create movement animations on the object

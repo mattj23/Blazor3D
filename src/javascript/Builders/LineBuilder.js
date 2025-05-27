@@ -13,7 +13,7 @@ class LineBuilder {
 
     
     line.uuid = options.uuid;
-    line.ignoreMouseEvents = options.ignoreMouseEvents;
+    line.calculateMouseEvents = options.calculateMouseEvents;
     Transforms.setPosition(line, options.position);
     Transforms.setRotation(line,options.rotation);
     Transforms.setScale(line,options.scale);
