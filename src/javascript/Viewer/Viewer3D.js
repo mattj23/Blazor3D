@@ -373,7 +373,13 @@ class Viewer3D {
                 this.options.viewerSettings.containerId,
                 this.lastHoveredObject.uuid
             );
-            this.lastHoveredObject = null;
+            this.lastHoveredObject = intersects[0].object;
+            DotNet.invokeMethodAsync(
+                "Blazor3D",
+                "ReceiveHoveredObjectUUID",
+                this.options.viewerSettings.containerId,
+                this.lastHoveredObject.uuid
+            );
         }
         else if( !this.lastHoveredObject){
             this.lastHoveredObject = intersects[0].object;
