@@ -9,6 +9,8 @@ class GroupBuilder {
         options.children.forEach((childOptions) => {
             // todo: changes for text here (see Viewer.SetScene)
             var child = SceneBuilder.BuildChild(childOptions, scene);
+            child.updateMatrix();
+            child.updateWorldMatrix(true)
             if (child) {
                 group.add(child);
             }

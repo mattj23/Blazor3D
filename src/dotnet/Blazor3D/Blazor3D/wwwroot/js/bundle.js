@@ -319,6 +319,8 @@ class GroupBuilder {
         options.children.forEach((childOptions) => {
             // todo: changes for text here (see Viewer.SetScene)
             var child = _SceneBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].BuildChild(childOptions, scene);
+            child.updateMatrix();
+            child.updateWorldMatrix(true)
             if (child) {
                 group.add(child);
             }
@@ -1427,6 +1429,8 @@ class Viewer3D {
                 var child = _Builders_SceneBuilder__WEBPACK_IMPORTED_MODULE_4__["default"].BuildChild(childOptions, this.scene);
                 if (child) {
                     this.scene.add(child);
+                    child.updateMatrix();
+                    child.updateWorldMatrix(true)
                 }
             }
         });

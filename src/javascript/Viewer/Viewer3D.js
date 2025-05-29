@@ -135,6 +135,8 @@ class Viewer3D {
                 var child = SceneBuilder.BuildChild(childOptions, this.scene);
                 if (child) {
                     this.scene.add(child);
+                    child.updateMatrix();
+                    child.updateWorldMatrix(true)
                 }
             }
         });

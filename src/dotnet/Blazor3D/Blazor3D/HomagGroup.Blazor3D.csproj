@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <DocumentationFile>..\..\..\..\doc\HomagGroup.Blazor3D.xml</DocumentationFile>
-    <Version>1.3.3</Version>
+    <Version>1.3.4</Version>
     <Copyright>Roman Simuta, SamuelRe</Copyright>
     <PackageProjectUrl>https://github.com/SamuelReithmeir/Blazor3D</PackageProjectUrl>
   </PropertyGroup>
