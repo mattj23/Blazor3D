@@ -1819,7 +1819,6 @@ class Viewer3D {
             this.INTERSECTED.currentHex = this.INTERSECTED.material.color.getHex();
             this.INTERSECTED.currentOpacity = this.INTERSECTED.material.opacity;
             this.INTERSECTED.transparent = this.INTERSECTED.material.transparent;
-            console.log(this.INTERSECTED);
 
             this.INTERSECTED.material.color.setHex(
                 new three__WEBPACK_IMPORTED_MODULE_8__.Color(this.options.viewerSettings.selectedColor).getHex()
