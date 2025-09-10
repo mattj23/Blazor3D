@@ -296,6 +296,31 @@ namespace HomagGroup.Blazor3D.Viewers
         }
 
         /// <summary>
+        /// Adds an object to the list of selectable objects by its uuid.  If there are any selectable objects, the
+        /// selection mechanism will only allow selecting from those objects.
+        /// </summary>
+        /// <param name="uuid"></param>
+        public async Task AddSelectableByUuid(Guid uuid)
+        {
+            await bundleModule.InvokeVoidAsync("addSelectableByUuid", uuid);
+        }
+        
+        public async Task AddPointLightOnOnCamera(string color, float intensity, float distance, float decay)
+        {
+            await bundleModule.InvokeVoidAsync("addPointLightOnCamera", color, intensity, distance, decay);
+        }
+        
+        public async Task SetColorByUuid(Guid uuid, string color)
+        {
+            await bundleModule.InvokeVoidAsync("setColorByUuid", uuid, color);
+        }
+        
+        public async Task SetOpacityByUuid(Guid uuid, float opacity)
+        {
+            await bundleModule.InvokeVoidAsync("setOpacityByUuid", uuid, opacity);
+        }
+
+        /// <summary>
         /// Clears scene.
         /// </summary>
         /// <returns>Task</returns>

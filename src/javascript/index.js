@@ -30,6 +30,22 @@ export function selectByUuid(guid) {
   return viewer3d.selectByUuid(guid);
 }
 
+export function addSelectableByUuid(guid) {
+  return viewer3d.addSelectableByUuid(guid);
+}
+
+export function setColorByUuid(guid, color) {
+  return viewer3d.setColorByUuid(guid, color);
+}
+
+export function setOpacityByUuid(uuid, alpha) {
+    return viewer3d.setOpacityByUuid(uuid, alpha);
+}
+
+export function addPointLightOnCamera(color, intensity, distance, decay) {
+  return viewer3d.addPointLightOnCamera(color, intensity, distance, decay);
+}
+
 export function clearScene() {
   viewer3d.clearScene();
 }

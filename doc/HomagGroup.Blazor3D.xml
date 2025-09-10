@@ -1998,6 +1998,13 @@
             <param name="uuid">Unique identifier of object to select</param>
             <returns>Task</returns>
         </member>
+        <member name="M:HomagGroup.Blazor3D.Viewers.Viewer.AddSelectableByUuid(System.Guid)">
+            <summary>
+            Adds an object to the list of selectable objects by its uuid.  If there are any selectable objects, the
+            selection mechanism will only allow selecting from those objects.
+            </summary>
+            <param name="uuid"></param>
+        </member>
         <member name="M:HomagGroup.Blazor3D.Viewers.Viewer.ClearSceneAsync">
             <summary>
             Clears scene.

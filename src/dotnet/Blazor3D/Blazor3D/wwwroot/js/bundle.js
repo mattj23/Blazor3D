@@ -1308,6 +1308,7 @@ class Viewer3D {
     thetaZ = 0;
     mouse = new three__WEBPACK_IMPORTED_MODULE_8__.Vector2();
     raycaster = new three__WEBPACK_IMPORTED_MODULE_8__.Raycaster();
+    selectable = [];
 
     INTERSECTED = null;
     clock = null;
@@ -1331,15 +1332,20 @@ class Viewer3D {
         if (this.options.viewerSettings.showViewHelper) {
             this.renderer.autoClear = false;
         }
-        
+
 
         this.renderer.domElement.style.width = "100%";
         this.renderer.domElement.style.height = "100%";
 
         this.renderer.domElement.onclick = (event) => {
-            if (this.options.viewerSettings.canSelect == true) {
+            if (this.options.viewerSettings.canSelect == true
+                && (event.ctrlKey === this.options.viewerSettings.selectCtrlKey)
+                && (event.shiftKey === this.options.viewerSettings.selectShiftKey)
+                && (event.altKey === this.options.viewerSettings.selectAltKey)
+            ) {
                 this.selectObject(event);
             }
+
             if(this.options.viewerSettings.mouseEventsEnabled===true){
                 this.handleMouseClick(event);
             }
@@ -1591,6 +1597,20 @@ class Viewer3D {
         return result;
     }
 
+    raycastSelectable() {
+        if (this.selectable.length === 0) {
+            return this.raycaster.intersectObjects(
+                this.scene.children,
+                true
+            );
+        }
+
+        return this.raycaster.intersectObjects(
+            this.selectable,
+            true
+        );
+    }
+
     selectObject(event) {
         let canvas = this.renderer.domElement;
 
@@ -1598,10 +1618,7 @@ class Viewer3D {
         this.mouse.y = -(event.offsetY / canvas.clientHeight) * 2 + 1;
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        const intersects = this.raycaster.intersectObjects(
-            this.scene.children,
-            true
-        );
+        const intersects = this.raycastSelectable();
 
         if (intersects.length == 0) {
             if (this.INTERSECTED) {
@@ -1637,7 +1654,7 @@ class Viewer3D {
             );
         }
     }
-    
+
     lastHoveredObject = null;
     handleMouseMove(event){
         let canvas = this.renderer.domElement;
@@ -1746,6 +1763,37 @@ class Viewer3D {
         return false;
     }
 
+    addSelectableByUuid(uuid) {
+        let obj = this.scene.getObjectByProperty("uuid", uuid);
+        if (obj) {
+            this.selectable.push(obj)
+        }
+    }
+
+    setColorByUuid(uuid, color) {
+        let obj = this.scene.getObjectByProperty("uuid", uuid);
+        if (obj && obj.material) {
+            obj.material.color = new three__WEBPACK_IMPORTED_MODULE_8__.Color(color);
+            obj.material.needsUpdate = true;
+        }
+    }
+
+    setOpacityByUuid(uuid, alpha) {
+        let obj = this.scene.getObjectByProperty("uuid", uuid);
+        if (obj && obj.material) {
+            obj.material.transparent = alpha < 1.0;
+            obj.material.opacity = alpha;
+            obj.material.needsUpdate = true;
+        }
+    }
+
+    addPointLightOnCamera(color, intensity, distance, decay) {
+        const light = new three__WEBPACK_IMPORTED_MODULE_8__.PointLight(color, intensity, distance, decay);
+        this.camera.add(light);
+        light.position.set(0, 0, 0);
+        this.scene.add(this.camera);
+    }
+
     selectByUuid(uuid) {
         let obj = this.scene.getObjectByProperty("uuid", uuid);
         if (obj) {
@@ -1761,14 +1809,29 @@ class Viewer3D {
 
     processSelection(objToSelect) {
         if (this.INTERSECTED != objToSelect) {
-            if (this.INTERSECTED)
+            if (this.INTERSECTED) {
                 this.INTERSECTED.material.color.setHex(this.INTERSECTED.currentHex);
+                this.INTERSECTED.material.opacity = this.INTERSECTED.currentOpacity;
+                this.INTERSECTED.material.transparent = this.INTERSECTED.transparent;
+            }
 
             this.INTERSECTED = objToSelect;
             this.INTERSECTED.currentHex = this.INTERSECTED.material.color.getHex();
+            this.INTERSECTED.currentOpacity = this.INTERSECTED.material.opacity;
+            this.INTERSECTED.transparent = this.INTERSECTED.material.transparent;
+            console.log(this.INTERSECTED);
+
             this.INTERSECTED.material.color.setHex(
                 new three__WEBPACK_IMPORTED_MODULE_8__.Color(this.options.viewerSettings.selectedColor).getHex()
             );
+
+            if (this.options.viewerSettings.opacityOnSelect < 1.0) {
+                this.INTERSECTED.material.opacity = this.options.viewerSettings.opacity;
+                this.INTERSECTED.material.transparent = true;
+            } else {
+                this.INTERSECTED.material.opacity = 1.0;
+                this.INTERSECTED.material.transparent = false;
+            }
         }
     }
 }
@@ -77952,6 +78015,8 @@ var __webpack_exports__ = {};
   \******************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "addPointLightOnCamera": () => (/* binding */ addPointLightOnCamera),
+/* harmony export */   "addSelectableByUuid": () => (/* binding */ addSelectableByUuid),
 /* harmony export */   "clearScene": () => (/* binding */ clearScene),
 /* harmony export */   "getSceneItemByGuid": () => (/* binding */ getSceneItemByGuid),
 /* harmony export */   "import3DModel": () => (/* binding */ import3DModel),
@@ -77960,7 +78025,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "removeByUuid": () => (/* binding */ removeByUuid),
 /* harmony export */   "selectByUuid": () => (/* binding */ selectByUuid),
 /* harmony export */   "setCameraPosition": () => (/* binding */ setCameraPosition),
+/* harmony export */   "setColorByUuid": () => (/* binding */ setColorByUuid),
 /* harmony export */   "setObjectTransform": () => (/* binding */ setObjectTransform),
+/* harmony export */   "setOpacityByUuid": () => (/* binding */ setOpacityByUuid),
 /* harmony export */   "showCurrentCameraInfo": () => (/* binding */ showCurrentCameraInfo),
 /* harmony export */   "updateCamera": () => (/* binding */ updateCamera),
 /* harmony export */   "updateOrbitControls": () => (/* binding */ updateOrbitControls),
@@ -77997,6 +78064,22 @@ function removeByUuid(guid) {
 
 function selectByUuid(guid) {
   return viewer3d.selectByUuid(guid);
+}
+
+function addSelectableByUuid(guid) {
+  return viewer3d.addSelectableByUuid(guid);
+}
+
+function setColorByUuid(guid, color) {
+  return viewer3d.setColorByUuid(guid, color);
+}
+
+function setOpacityByUuid(uuid, alpha) {
+    return viewer3d.setOpacityByUuid(uuid, alpha);
+}
+
+function addPointLightOnCamera(color, intensity, distance, decay) {
+  return viewer3d.addPointLightOnCamera(color, intensity, distance, decay);
 }
 
 function clearScene() {
@@ -78042,6 +78125,8 @@ function getSceneItemByGuid(guid) {
 
 })();
 
+var __webpack_exports__addPointLightOnCamera = __webpack_exports__.addPointLightOnCamera;
+var __webpack_exports__addSelectableByUuid = __webpack_exports__.addSelectableByUuid;
 var __webpack_exports__clearScene = __webpack_exports__.clearScene;
 var __webpack_exports__getSceneItemByGuid = __webpack_exports__.getSceneItemByGuid;
 var __webpack_exports__import3DModel = __webpack_exports__.import3DModel;
@@ -78050,11 +78135,13 @@ var __webpack_exports__loadViewer = __webpack_exports__.loadViewer;
 var __webpack_exports__removeByUuid = __webpack_exports__.removeByUuid;
 var __webpack_exports__selectByUuid = __webpack_exports__.selectByUuid;
 var __webpack_exports__setCameraPosition = __webpack_exports__.setCameraPosition;
+var __webpack_exports__setColorByUuid = __webpack_exports__.setColorByUuid;
 var __webpack_exports__setObjectTransform = __webpack_exports__.setObjectTransform;
+var __webpack_exports__setOpacityByUuid = __webpack_exports__.setOpacityByUuid;
 var __webpack_exports__showCurrentCameraInfo = __webpack_exports__.showCurrentCameraInfo;
 var __webpack_exports__updateCamera = __webpack_exports__.updateCamera;
 var __webpack_exports__updateOrbitControls = __webpack_exports__.updateOrbitControls;
 var __webpack_exports__updateScene = __webpack_exports__.updateScene;
-export { __webpack_exports__clearScene as clearScene, __webpack_exports__getSceneItemByGuid as getSceneItemByGuid, __webpack_exports__import3DModel as import3DModel, __webpack_exports__importSprite as importSprite, __webpack_exports__loadViewer as loadViewer, __webpack_exports__removeByUuid as removeByUuid, __webpack_exports__selectByUuid as selectByUuid, __webpack_exports__setCameraPosition as setCameraPosition, __webpack_exports__setObjectTransform as setObjectTransform, __webpack_exports__showCurrentCameraInfo as showCurrentCameraInfo, __webpack_exports__updateCamera as updateCamera, __webpack_exports__updateOrbitControls as updateOrbitControls, __webpack_exports__updateScene as updateScene };
+export { __webpack_exports__addPointLightOnCamera as addPointLightOnCamera, __webpack_exports__addSelectableByUuid as addSelectableByUuid, __webpack_exports__clearScene as clearScene, __webpack_exports__getSceneItemByGuid as getSceneItemByGuid, __webpack_exports__import3DModel as import3DModel, __webpack_exports__importSprite as importSprite, __webpack_exports__loadViewer as loadViewer, __webpack_exports__removeByUuid as removeByUuid, __webpack_exports__selectByUuid as selectByUuid, __webpack_exports__setCameraPosition as setCameraPosition, __webpack_exports__setColorByUuid as setColorByUuid, __webpack_exports__setObjectTransform as setObjectTransform, __webpack_exports__setOpacityByUuid as setOpacityByUuid, __webpack_exports__showCurrentCameraInfo as showCurrentCameraInfo, __webpack_exports__updateCamera as updateCamera, __webpack_exports__updateOrbitControls as updateOrbitControls, __webpack_exports__updateScene as updateScene };
 
 //# sourceMappingURL=bundle.js.map

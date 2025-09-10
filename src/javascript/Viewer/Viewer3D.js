@@ -14,6 +14,7 @@ class Viewer3D {
     thetaZ = 0;
     mouse = new THREE.Vector2();
     raycaster = new THREE.Raycaster();
+    selectable = [];
 
     INTERSECTED = null;
     clock = null;
@@ -37,15 +38,20 @@ class Viewer3D {
         if (this.options.viewerSettings.showViewHelper) {
             this.renderer.autoClear = false;
         }
-        
+
 
         this.renderer.domElement.style.width = "100%";
         this.renderer.domElement.style.height = "100%";
 
         this.renderer.domElement.onclick = (event) => {
-            if (this.options.viewerSettings.canSelect == true) {
+            if (this.options.viewerSettings.canSelect == true
+                && (event.ctrlKey === this.options.viewerSettings.selectCtrlKey)
+                && (event.shiftKey === this.options.viewerSettings.selectShiftKey)
+                && (event.altKey === this.options.viewerSettings.selectAltKey)
+            ) {
                 this.selectObject(event);
             }
+
             if(this.options.viewerSettings.mouseEventsEnabled===true){
                 this.handleMouseClick(event);
             }
@@ -297,6 +303,20 @@ class Viewer3D {
         return result;
     }
 
+    raycastSelectable() {
+        if (this.selectable.length === 0) {
+            return this.raycaster.intersectObjects(
+                this.scene.children,
+                true
+            );
+        }
+
+        return this.raycaster.intersectObjects(
+            this.selectable,
+            true
+        );
+    }
+
     selectObject(event) {
         let canvas = this.renderer.domElement;
 
@@ -304,10 +324,7 @@ class Viewer3D {
         this.mouse.y = -(event.offsetY / canvas.clientHeight) * 2 + 1;
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        const intersects = this.raycaster.intersectObjects(
-            this.scene.children,
-            true
-        );
+        const intersects = this.raycastSelectable();
 
         if (intersects.length == 0) {
             if (this.INTERSECTED) {
@@ -343,7 +360,7 @@ class Viewer3D {
             );
         }
     }
-    
+
     lastHoveredObject = null;
     handleMouseMove(event){
         let canvas = this.renderer.domElement;
@@ -452,6 +469,37 @@ class Viewer3D {
         return false;
     }
 
+    addSelectableByUuid(uuid) {
+        let obj = this.scene.getObjectByProperty("uuid", uuid);
+        if (obj) {
+            this.selectable.push(obj)
+        }
+    }
+
+    setColorByUuid(uuid, color) {
+        let obj = this.scene.getObjectByProperty("uuid", uuid);
+        if (obj && obj.material) {
+            obj.material.color = new THREE.Color(color);
+            obj.material.needsUpdate = true;
+        }
+    }
+
+    setOpacityByUuid(uuid, alpha) {
+        let obj = this.scene.getObjectByProperty("uuid", uuid);
+        if (obj && obj.material) {
+            obj.material.transparent = alpha < 1.0;
+            obj.material.opacity = alpha;
+            obj.material.needsUpdate = true;
+        }
+    }
+
+    addPointLightOnCamera(color, intensity, distance, decay) {
+        const light = new THREE.PointLight(color, intensity, distance, decay);
+        this.camera.add(light);
+        light.position.set(0, 0, 0);
+        this.scene.add(this.camera);
+    }
+
     selectByUuid(uuid) {
         let obj = this.scene.getObjectByProperty("uuid", uuid);
         if (obj) {
@@ -467,14 +515,28 @@ class Viewer3D {
 
     processSelection(objToSelect) {
         if (this.INTERSECTED != objToSelect) {
-            if (this.INTERSECTED)
+            if (this.INTERSECTED) {
                 this.INTERSECTED.material.color.setHex(this.INTERSECTED.currentHex);
+                this.INTERSECTED.material.opacity = this.INTERSECTED.currentOpacity;
+                this.INTERSECTED.material.transparent = this.INTERSECTED.transparent;
+            }
 
             this.INTERSECTED = objToSelect;
             this.INTERSECTED.currentHex = this.INTERSECTED.material.color.getHex();
+            this.INTERSECTED.currentOpacity = this.INTERSECTED.material.opacity;
+            this.INTERSECTED.transparent = this.INTERSECTED.material.transparent;
+
             this.INTERSECTED.material.color.setHex(
                 new THREE.Color(this.options.viewerSettings.selectedColor).getHex()
             );
+
+            if (this.options.viewerSettings.opacityOnSelect < 1.0) {
+                this.INTERSECTED.material.opacity = this.options.viewerSettings.opacity;
+                this.INTERSECTED.material.transparent = true;
+            } else {
+                this.INTERSECTED.material.opacity = 1.0;
+                this.INTERSECTED.material.transparent = false;
+            }
         }
     }
 }

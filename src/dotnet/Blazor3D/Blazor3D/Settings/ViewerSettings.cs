@@ -18,6 +18,10 @@ namespace HomagGroup.Blazor3D.Settings
         /// </summary>
         public bool CanSelect { get; set; } = false;
         
+        public bool SelectCtrlKey { get; set; } = false;
+        public bool SelectAltKey { get; set; } = false;
+        public bool SelectShiftKey { get; set; } = false;
+        
         /// <summary>
         /// If true, get mouse click, hover and hover end events. Default is false.
         /// </summary>
@@ -32,6 +36,8 @@ namespace HomagGroup.Blazor3D.Settings
         /// Color the selected element is highlighted. Default is "lime".
         /// </summary>
         public string SelectedColor { get; set; } = "lime";
+        
+        public float SelectOpacity { get; set; } = 1.0f;
 
         /// <summary>
         /// Show or hide ViewHelper
