@@ -1620,9 +1620,11 @@ class Viewer3D {
         this.raycaster.setFromCamera(this.mouse, this.camera);
         const intersects = this.raycastSelectable();
 
-        if (intersects.length == 0) {
+        if (intersects.length === 0) {
             if (this.INTERSECTED) {
                 this.INTERSECTED.material.color.setHex(this.INTERSECTED.currentHex);
+                this.INTERSECTED.material.opacity = this.INTERSECTED.currentOpacity;
+                this.INTERSECTED.material.transparent = this.INTERSECTED.transparent;
             }
 
             this.INTERSECTED = null;
