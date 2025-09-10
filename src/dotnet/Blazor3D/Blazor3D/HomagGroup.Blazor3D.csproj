@@ -6,17 +6,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <DocumentationFile>..\..\..\..\doc\HomagGroup.Blazor3D.xml</DocumentationFile>
-    <Version>1.3.4</Version>
+    <Version>1.3.5</Version>
     <Copyright>Roman Simuta, SamuelRe</Copyright>
     <PackageProjectUrl>https://github.com/SamuelReithmeir/Blazor3D</PackageProjectUrl>
   </PropertyGroup>
 
 	<PropertyGroup>
-		<PackageId>SamuelRe.Blazor3D</PackageId>
+		<PackageId>M.Blazor3D</PackageId>
 		<Authors>HOMAG-Group</Authors>
 		<PackageTags>Blazor3D, three.js, Blazor, Razor, Homag-Group, Homag, HomagGroup</PackageTags>
 		<RepositoryType>git</RepositoryType>
-		<RepositoryUrl>https://github.com/SamuelReithmeir/Blazor3D</RepositoryUrl>
+		<RepositoryUrl>https://github.com/mattj23/Blazor3D</RepositoryUrl>
         <Description>
             Blazor3D is a Razor class library that allows developers to render interactive 3D scenes using three.js in Blazor applications.
             
