@@ -22,4 +22,6 @@ jobs:
     - name: Pack
       run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output . ./src/dotnet/Blazor3D/Blazor3D.sln
     - name: Push
-      run: dotnet nuget push M.Blazor3D.${VERSION}.nupkg --api-key ${secrets.NUGET_API_KEY} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push M.Blazor3D.${VERSION}.nupkg --api-key ${NUGET_API_KEY} --source https://api.nuget.org/v3/index.json
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
